@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Order Confirmation</title>
+  <!-- Google Font: Inter -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body style="margin:0; padding:0; background:#f4f4f4; font-family:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; color:#333;">
+
+  <!-- HEADER -->
+  <div style="background:#ffffff; padding:20px; text-align:center; border-bottom:2px solid #e63946; font-family:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;">
+    <img src="https://onemorepour.com/cdn/shop/files/1_47bb4d18-9fe2-4cf9-9ec3-53f25e7df353_200x.png?v=1754598660" alt="Logo" style="max-height:60px;">
+  </div>
+
+  <!-- HERO -->
+  <div style="padding:30px 20px; text-align:center; background:#fafafa; font-family:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;">
+    <h2 style="margin:0; font-size:22px; font-weight:600; color:#333;">Thank you for your order!</h2>
+    <p style="margin:10px 0 20px; font-size:15px; color:#666;">We’ve received your order <strong>#{{ order.name }}</strong>. You’ll get another email when your items ship.</p>
+    <a href="{{ shop.url }}/account" 
+       style="display:inline-block; background:#e63946; color:#fff; text-decoration:none; padding:12px 24px; border-radius:6px; font-weight:600; font-family:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;">
+       View Your Order
+    </a>
+  </div>
+
+  <!-- ORDER SUMMARY -->
+  <div style="max-width:600px; margin:30px auto; background:#fff; border-radius:10px; box-shadow:0 2px 6px rgba(0,0,0,0.08); padding:20px; font-family:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;">
+    <h3 style="margin:0 0 15px; font-size:18px; color:#333; border-bottom:1px solid #eee; padding-bottom:8px;">Order Summary</h3>
+    {% for line in line_items %}
+    <div style="display:flex; align-items:center; border-bottom:1px solid #f0f0f0; padding:12px 0;">
+      <img src="{{ line.image | img_url: '100x100' }}" alt="{{ line.title }}" style="width:60px; height:60px; object-fit:cover; border-radius:6px; margin-right:15px;">
+      <div style="flex:1;">
+        <p style="margin:0; font-size:15px; font-weight:500; color:#333;">{{ line.title }}</p>
+        {% if line.variant.title != 'Default Title' %}
+          <p style="margin:2px 0; font-size:13px; color:#777;">{{ line.variant.title }}</p>
+        {% endif %}
+        <p style="margin:2px 0; font-size:13px; color:#777;">Qty: {{ line.quantity }}</p>
+      </div>
+      <div style="font-size:15px; font-weight:600; color:#333;">{{ line.final_line_price | money }}</div>
+    </div>
+    {% endfor %}
+
+    <!-- TOTALS -->
+    <div style="margin-top:15px; border-top:2px solid #eee; padding-top:15px;">
+      <table style="width:100%; font-size:14px; color:#444; font-family:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;">
+        <tr>
+          <td style="padding:4px 0;">Subtotal:</td>
+          <td style="text-align:right;">{{ subtotal_price | money }}</td>
+        </tr>
+        {% if discounts %}
+        <tr>
+          <td style="padding:4px 0; color:#28a745;">Discount:</td>
+          <td style="text-align:right; color:#28a745;">-{{ discounts_savings | money }}</td>
+        </tr>
+        {% endif %}
+        <tr>
+          <td style="padding:4px 0;">Shipping:</td>
+          <td style="text-align:right;">{{ shipping_price | money }}</td>
+        </tr>
+        <tr>
+          <td style="padding:4px 0;">Tax:</td>
+          <td style="text-align:right;">{{ tax_price | money }}</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 0; font-size:16px; font-weight:700; color:#e63946;">Total:</td>
+          <td style="text-align:right; font-size:16px; font-weight:700; color:#e63946;">{{ total_price | money }}</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- CUSTOMER INFO -->
+  <table width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width:700px; margin:20px auto;">
+    <tr>
+      <!-- Shipping -->
+      <td width="33%" valign="top" style="padding:10px;">
+        <table width="100%" height="220" style="background:#fff; border-radius:10px; box-shadow:0 2px 6px rgba(0,0,0,0.05); border:1px solid #e63946;" cellspacing="0" cellpadding="0" border="0">
+          <tr><td style="padding:15px; vertical-align:top;">
+            <h4 style="margin:0 0 8px; font-size:15px; font-weight:600; color:#e63946;">📦 Shipping Address</h4>
+            <p style="margin:2px 0; font-size:14px; color:#444;">{{ shipping_address.name }}</p>
+            <p style="margin:2px 0; font-size:14px; color:#444;">{{ shipping_address.address1 }}</p>
+            {% if shipping_address.address2 %}
+              <p style="margin:2px 0; font-size:14px; color:#444;">{{ shipping_address.address2 }}</p>
+            {% endif %}
+            <p style="margin:2px 0; font-size:14px; color:#444;">{{ shipping_address.city }}, {{ shipping_address.province }} {{ shipping_address.zip }}</p>
+            <p style="margin:2px 0; font-size:14px; color:#444;">{{ shipping_address.country }}</p>
+          </td></tr>
+        </table>
+      </td>
+
+      <!-- Billing -->
+      <td width="33%" valign="top" style="padding:10px;">
+        <table width="100%" height="220" style="background:#fff; border-radius:10px; box-shadow:0 2px 6px rgba(0,0,0,0.05); border:1px solid #e63946;" cellspacing="0" cellpadding="0" border="0">
+          <tr><td style="padding:15px; vertical-align:top;">
+            <h4 style="margin:0 0 8px; font-size:15px; font-weight:600; color:#e63946;">🧾 Billing Address</h4>
+            <p style="margin:2px 0; font-size:14px; color:#444;">{{ billing_address.name }}</p>
+            <p style="margin:2px 0; font-size:14px; color:#444;">{{ billing_address.address1 }}</p>
+            {% if billing_address.address2 %}
+              <p style="margin:2px 0; font-size:14px; color:#444;">{{ billing_address.address2 }}</p>
+            {% endif %}
+            <p style="margin:2px 0; font-size:14px; color:#444;">{{ billing_address.city }}, {{ billing_address.province }} {{ billing_address.zip }}</p>
+            <p style="margin:2px 0; font-size:14px; color:#444;">{{ billing_address.country }}</p>
+          </td></tr>
+        </table>
+      </td>
+
+      <!-- Payment -->
+      <td width="33%" valign="top" style="padding:10px;">
+        <table width="100%" height="220" style="background:#fff; border-radius:10px; box-shadow:0 2px 6px rgba(0,0,0,0.05); border:1px solid #e63946;" cellspacing="0" cellpadding="0" border="0">
+          <tr><td style="padding:15px; vertical-align:top;">
+            <h4 style="margin:0 0 8px; font-size:15px; font-weight:600; color:#e63946;">💳 Payment Method</h4>
+            <p style="margin:2px 0; font-size:14px; color:#444;">{{ transaction.gateway }}</p>
+          </td></tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+
+  <!-- FOOTER -->
+  <div style="margin-top:30px; padding:20px; text-align:center; font-size:13px; color:#888; background:#FAFAFA; font-family:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;">
+    <p style="margin:0 0 10px;">Follow us for updates:</p>
+    <div style="margin-bottom:10px;">
+      <a href="https://www.facebook.com/people/Onemorepour/61578193236275/#" style="margin:0 8px; text-decoration:none; color:#e63946;">Facebook</a>
+      <a href="https://onemorepour.com/#" style="margin:0 8px; text-decoration:none; color:#e63946;">Instagram</a>
+    </div>
+    <p style="margin:0;">&copy; {{ 'now' | date: "%Y" }} One More Pour Store. All rights reserved.</p>
+  </div>
+
+</body>
+</html>
